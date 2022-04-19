@@ -41,7 +41,7 @@ func GenerateToken() (TokenBuilder, error) {
 	if len(t.ClientId) == 0 {
 		return t, fmt.Errorf("env var client_secret must be set")
 	}
-	t.TenantId = os.Getenv("ARM_TENANT__ID")
+	t.TenantId = os.Getenv("ARM_TENANT_ID")
 	if len(t.ClientId) == 0 {
 		return t, fmt.Errorf("env var tenant_id must be set")
 	}

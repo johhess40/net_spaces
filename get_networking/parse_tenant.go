@@ -9,18 +9,18 @@ import (
 )
 
 type Subscription struct {
-	Id             string `json:"id"`
-	SubscriptionId string `json:"subscriptionId"`
-	TenantId       string `json:"tenantId"`
-	DisplayName    string `json:"displayName"`
-	State          string `json:"state"`
+	Value []struct {
+		Id             string `json:"id"`
+		SubscriptionId string `json:"subscriptionId"`
+		TenantId       string `json:"tenantId"`
+		DisplayName    string `json:"displayName"`
+		State          string `json:"state"`
+	} `json:"value"`
 }
 
-type Subscriptions []Subscription
-
 //GetSubscriptions reads all the subscriptions available for the tenant
-func GetSubscriptions(t TokenBuilder) (Subscriptions, error) {
-	var s Subscriptions
+func GetSubscriptions(t TokenBuilder) (Subscription, error) {
+	var s Subscription
 
 	u := "https://management.azure.com/subscriptions?api-version=2020-01-01"
 

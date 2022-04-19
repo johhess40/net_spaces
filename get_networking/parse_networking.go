@@ -109,9 +109,9 @@ func ReturnNetworks(s SwitchData) ([]string, error) {
 	return n, nil
 }
 
-func BuildCompositeNetworkData(t TokenBuilder, s Subscriptions) (AzureNetData, error) {
+func BuildCompositeNetworkData(t TokenBuilder, s Subscription) (AzureNetData, error) {
 	var d AzureNetData
-	for _, x := range s {
+	for _, x := range s.Value {
 		networks, err := GetNetworks(x.SubscriptionId, t)
 		if err != nil {
 			return d, fmt.Errorf(err.Error())
@@ -140,7 +140,7 @@ func EvaluateAvailableNetworks(data SwitchData, a AzureNetworks) ([]string, erro
 	return available, nil
 }
 
-func RunAll(data SwitchData, t TokenBuilder, n Subscriptions) (string, error) {
+func RunAll(data SwitchData, t TokenBuilder, n Subscription) (string, error) {
 	var grail []string
 	x, err := BuildCompositeNetworkData(t, n)
 	if err != nil {

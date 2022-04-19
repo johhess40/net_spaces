@@ -22,7 +22,7 @@ var (
 
 // displayCmd represents the display command
 var addressCmd = &cobra.Command{
-	Use:   "display",
+	Use:   "address",
 	Short: "display returns data about the spoke you will be deploying",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
