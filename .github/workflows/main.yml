@@ -31,13 +31,14 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}  
         run: |
-          export ARM_CLIENT_ID=$ARM_CLIENT_ID
-          export ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET
-          export ARM_TENANT_ID=$ARM_TENANT_ID
-          echo test, and deploy your project.
+          echo $ARM_CLIENT_ID
           
       # Runs a set of commands using the runners shell
       - name: Run a GRANDE test
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }} 
         run: |
           go build 
           ./net_spaces address --cidr /24 --region eastus2 --size grande --space 10.220.128.0
