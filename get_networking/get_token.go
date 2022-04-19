@@ -45,7 +45,6 @@ func GenerateToken() (TokenBuilder, error) {
 	if len(t.ClientId) == 0 {
 		return t, fmt.Errorf("env var tenant_id must be set")
 	}
-
 	t, err := DoTokenRequest(t)
 	if err != nil {
 		return t, err
@@ -97,4 +96,18 @@ func DoTokenRequest(t TokenBuilder) (TokenBuilder, error) {
 
 	}
 	return t, nil
+}
+
+func ExecToken() (TokenBuilder, error) {
+	token, err := GenerateToken()
+	if err != nil {
+		return TokenBuilder{}, err
+	}
+
+	request, err := DoTokenRequest(token)
+	if err != nil {
+		return TokenBuilder{}, err
+	}
+
+	return request, nil
 }

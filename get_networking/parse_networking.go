@@ -160,7 +160,7 @@ func RunAll(data SwitchData, t TokenBuilder, n Subscriptions) (string, error) {
 	return grail[randomIndex], nil
 }
 
-func JsonReturn(data SwitchData, t TokenBuilder, n Subscriptions) (struct {
+func JsonReturn(data SwitchData, t TokenBuilder) (struct {
 	Region       string
 	ClientId     string
 	TenantId     string
@@ -171,6 +171,11 @@ func JsonReturn(data SwitchData, t TokenBuilder, n Subscriptions) (struct {
 		ClientId     string
 		TenantId     string
 		AddressSpace string
+	}
+
+	n, err := GetSubscriptions(t)
+	if err != nil {
+		return jsonData, err
 	}
 
 	all, err := RunAll(data, t, n)
@@ -192,16 +197,23 @@ func JsonReturn(data SwitchData, t TokenBuilder, n Subscriptions) (struct {
 	return jsonData, nil
 }
 
-func CreateJson(data SwitchData, t TokenBuilder, n Subscriptions, next struct {
-	Region       string
-	ClientId     string
-	TenantId     string
-	AddressSpace string
-}) (string, error) {
-	s, err := json.Marshal(next)
+func CreateJson(data SwitchData, t TokenBuilder) (string, error) {
+	createJson, err := JsonReturn(data, t)
+	if err != nil {
+		return "", err
+	}
+	s, err := json.Marshal(createJson)
 	if err != nil {
 		return "", fmt.Errorf(err.Error())
 	}
 
 	return string(s), nil
+}
+
+func Entry(data SwitchData, t TokenBuilder) (string, error) {
+	d, err := CreateJson(data, t)
+	if err != nil {
+		return d, err
+	}
+	return fmt.Sprintf("%s", d), nil
 }
