@@ -1,0 +1,43 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ test ]
+  pull_request:
+    branches: [ main ]
+
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a set of commands using the runners shell
+      - name: Export VARS
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}  
+        run: |
+          export ARM_CLIENT_ID=$ARM_CLIENT_ID
+          export ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET
+          export ARM_TENANT_ID=$ARM_TENANT_ID
+          echo test, and deploy your project.
+          
+      # Runs a set of commands using the runners shell
+      - name: Run a GRANDE test
+        run: |
+          go build 
+          ./net_spaces address --cidr /24 --region eastus2 --size grande --space 10.220.128.0
