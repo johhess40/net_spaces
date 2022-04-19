@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 )
 
@@ -85,6 +86,29 @@ func GetNetworks(s string, t TokenBuilder) (AzureNetworks, error) {
 	return a, nil
 }
 
+func ReturnNetworks(s SwitchData) ([]string, error) {
+	var n []string
+	var err error
+
+	switch s.Region {
+	case "westus2":
+		n, err = MakeTheSwitch(s)
+		if err != nil {
+			return n, fmt.Errorf(err.Error())
+		}
+
+		return n, nil
+	case "eastus2":
+		n, err = MakeTheSwitch(s)
+		if err != nil {
+			return n, fmt.Errorf(err.Error())
+		}
+
+		return n, nil
+	}
+	return n, nil
+}
+
 func BuildCompositeNetworkData(t TokenBuilder, s Subscriptions) (AzureNetData, error) {
 	var d AzureNetData
 	for _, x := range s {
@@ -95,4 +119,89 @@ func BuildCompositeNetworkData(t TokenBuilder, s Subscriptions) (AzureNetData, e
 		d = append(d, networks)
 	}
 	return d, nil
+}
+
+func EvaluateAvailableNetworks(data SwitchData, a AzureNetworks) ([]string, error) {
+	var available []string
+	ret, err := ReturnNetworks(data)
+	if err != nil {
+		return available, err
+	}
+
+	for _, v := range ret {
+		for _, b := range a.Value {
+			for _, z := range b.Properties.AddressSpace.AddressPrefixes {
+				if z != v {
+					available = append(available, v)
+				}
+			}
+		}
+	}
+	return available, nil
+}
+
+func RunAll(data SwitchData, t TokenBuilder, n Subscriptions) (string, error) {
+	var grail []string
+	x, err := BuildCompositeNetworkData(t, n)
+	if err != nil {
+		return "", err
+	}
+	for _, a := range x {
+		eval, err := EvaluateAvailableNetworks(data, a)
+		if err != nil {
+			return "", err
+		}
+		for _, m := range eval {
+			grail = append(grail, m)
+		}
+	}
+	randomIndex := rand.Intn(len(grail))
+
+	return grail[randomIndex], nil
+}
+
+func JsonReturn(data SwitchData, t TokenBuilder, n Subscriptions) (struct {
+	Region       string
+	ClientId     string
+	TenantId     string
+	AddressSpace string
+}, error) {
+	var jsonData struct {
+		Region       string
+		ClientId     string
+		TenantId     string
+		AddressSpace string
+	}
+
+	all, err := RunAll(data, t, n)
+	if err != nil {
+		return jsonData, err
+	}
+	jsonData = struct {
+		Region       string
+		ClientId     string
+		TenantId     string
+		AddressSpace string
+	}{
+		Region:       data.Region,
+		ClientId:     t.ClientId,
+		TenantId:     t.TenantId,
+		AddressSpace: all,
+	}
+
+	return jsonData, nil
+}
+
+func CreateJson(data SwitchData, t TokenBuilder, n Subscriptions, next struct {
+	Region       string
+	ClientId     string
+	TenantId     string
+	AddressSpace string
+}) (string, error) {
+	s, err := json.Marshal(next)
+	if err != nil {
+		return "", fmt.Errorf(err.Error())
+	}
+
+	return string(s), nil
 }

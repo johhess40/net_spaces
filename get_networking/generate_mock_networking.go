@@ -33,14 +33,14 @@ func MakeTheSwitch(s SwitchData) ([]string, error) {
 
 	case "venti":
 		if len(s.Cidr) != 0 {
-			networks, err := BuildGrandeNetworks(s)
+			networks, err := BuildVentiNetworks(s)
 			if err != nil {
 				return networks, err
 			}
 			return networks, nil
 		} else {
 			s.Cidr = "/23"
-			networks, err := BuildGrandeNetworks(s)
+			networks, err := BuildVentiNetworks(s)
 			if err != nil {
 				return networks, err
 			}
@@ -67,9 +67,13 @@ func MakeTheSwitch(s SwitchData) ([]string, error) {
 //BuildGrandeNetworks builds a 16 oz virtual network
 func BuildGrandeNetworks(a SwitchData) ([]string, error) {
 	var s []string
-	for i := 0; i < 128; i++ {
-		next := strings.Replace(strings.Split(a.Space, ".")[2], strings.Split(a.Space, ".")[2], strconv.Itoa(i+2), 2)
-		s = append(s, next)
+	s = append(s, a.Space)
+	for i := 0; i < 354; i++ {
+		spl := strings.Split(a.Space, ".")
+		next := strings.Replace(spl[2], spl[2], strconv.Itoa(i+1), 2)
+		spl[2] = next
+		joined := strings.Join(spl, ".")
+		s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
 	}
 	if len(s) == 0 {
 		return s, fmt.Errorf("not able to build any grande address spaces in BuildGrandeNetworks")
@@ -82,8 +86,13 @@ func BuildGrandeNetworks(a SwitchData) ([]string, error) {
 func BuildVentiNetworks(a SwitchData) ([]string, error) {
 	var s []string
 	for i := 0; i < 128; i++ {
-		next := strings.Replace(strings.Split(a.Space, ".")[2], strings.Split(a.Space, ".")[2], strconv.Itoa(i+1), 2)
-		s = append(s, next)
+		if i%2 == 0 {
+			spl := strings.Split(a.Space, ".")
+			next := strings.Replace(spl[2], spl[2], strconv.Itoa(i), 2)
+			spl[2] = next
+			joined := strings.Join(spl, ".")
+			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+		}
 	}
 	if len(s) == 0 {
 		return s, fmt.Errorf("not able to build any venti address spaces in BuildVentiNetworks")
