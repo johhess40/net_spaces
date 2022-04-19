@@ -6,36 +6,28 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/spf13/cobra"
-)
-
-type DisplayData struct {
-	DisplayAll bool
-}
-
-var (
-	DataDisplay DisplayData
 )
 
 // displayCmd represents the display command
 var displayCmd = &cobra.Command{
 	Use:   "display",
-	Short: "display returns data about the spoke you will be deploying",
-	Long:  ``,
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Generating software defined network data!!!!!")
+		fmt.Println("display called")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(displayCmd)
-	displayCmd.Flags().BoolVarP(&DataDisplay.DisplayAll, "display-all", "a", true, "Should we return all data by default? Defaults to true...")
-	err := displayCmd.MarkFlagRequired("display-all")
-	if err != nil {
-		log.Fatalf("Error: %s", err.Error())
-	}
+
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
