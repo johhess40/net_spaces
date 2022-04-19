@@ -1,20 +1,16 @@
 package cmd
 
-//
-//import (
-//	"testing"
-//)
-//
-//func TestExecute(t *testing.T) {
-//	tests := []struct {
-//		name string
-//	}{
-//		// TODO: Add test cases.
-//		,
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			Execute()
-//		})
-//	}
-//}
+import (
+	"testing"
+)
+
+func TestExecute(t *testing.T) {
+	Execute()
+}
+
+func TestDisplay(t *testing.T) {
+	err := displayCmd.Flags().Parse([]string{"display-name"})
+	if err != nil {
+		return
+	}
+}

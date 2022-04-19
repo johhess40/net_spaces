@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -31,7 +32,10 @@ var displayCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(displayCmd)
 	displayCmd.Flags().BoolVarP(&DataDisplay.DisplayAll, "display-all", "a", true, "Should we return all data by default? Defaults to true...")
-
+	err := displayCmd.MarkFlagRequired("display-all")
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
