@@ -96,5 +96,3 @@ func BuildCompositeNetworkData(t TokenBuilder, s Subscriptions) (AzureNetData, e
 	}
 	return d, nil
 }
-
-

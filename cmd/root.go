@@ -51,7 +51,20 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().StringVarP(&NetStuff.NetSize, "netsize", "s", "smol", "What size spoke shall we deploy?")
+	rootCmd.Flags().StringVarP(&NetStuff.NetSize, "netsize", "s", "grande", "What size spoke shall we deploy?")
+	err := rootCmd.MarkFlagRequired("netsize")
+	if err != nil {
+		return
+	}
 	rootCmd.Flags().StringVarP(&NetStuff.NetName, "netname", "n", "", "What's you spokes name?")
+	err = rootCmd.MarkFlagRequired("netname")
+	if err != nil {
+		return
+	}
+
 	rootCmd.Flags().StringVarP(&NetStuff.NetRegion, "region", "r", "", "Where's your spoke at?")
+	err = rootCmd.MarkFlagRequired("region")
+	if err != nil {
+		return
+	}
 }
