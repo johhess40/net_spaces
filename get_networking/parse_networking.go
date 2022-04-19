@@ -48,7 +48,40 @@ type AzureNetworks struct {
 	} `json:"value"`
 }
 
-type AzureNetData []AzureNetworks
+type AzureNetData []struct {
+	Name     string `json:"name"`
+	ID       string `json:"id"`
+	Etag     string `json:"etag"`
+	Type     string `json:"type"`
+	Location string `json:"location"`
+	Tags     struct {
+	} `json:"tags"`
+	Properties struct {
+		ProvisioningState string `json:"provisioningState"`
+		ResourceGUID      string `json:"resourceGuid"`
+		AddressSpace      struct {
+			AddressPrefixes []string `json:"addressPrefixes"`
+		} `json:"addressSpace"`
+		Subnets []struct {
+			Name       string `json:"name"`
+			ID         string `json:"id"`
+			Etag       string `json:"etag"`
+			Properties struct {
+				ProvisioningState string `json:"provisioningState"`
+				AddressPrefix     string `json:"addressPrefix"`
+				IPConfigurations  []struct {
+					ID string `json:"id"`
+				} `json:"ipConfigurations"`
+				Delegations                       []interface{} `json:"delegations"`
+				PrivateEndpointNetworkPolicies    string        `json:"privateEndpointNetworkPolicies"`
+				PrivateLinkServiceNetworkPolicies string        `json:"privateLinkServiceNetworkPolicies"`
+			} `json:"properties"`
+			Type string `json:"type"`
+		} `json:"subnets"`
+		VirtualNetworkPeerings []interface{} `json:"virtualNetworkPeerings"`
+		EnableDdosProtection   bool          `json:"enableDdosProtection"`
+	} `json:"properties"`
+}
 
 //GetNetworks reads all the virtual networks in a given subscription for Azure
 func GetNetworks(s string, t TokenBuilder) (AzureNetworks, error) {
@@ -110,18 +143,18 @@ func ReturnNetworks(s SwitchData) ([]string, error) {
 }
 
 func BuildCompositeNetworkData(t TokenBuilder, s Subscription) (AzureNetData, error) {
-	var d AzureNetData
+	var net AzureNetData
 	for _, x := range s.Value {
 		networks, err := GetNetworks(x.SubscriptionId, t)
 		if err != nil {
-			return d, fmt.Errorf(err.Error())
+			return net, fmt.Errorf(err.Error())
 		}
-		d = append(d, networks)
+		net = append(net, networks.Value...)
 	}
-	return d, nil
+	return net, nil
 }
 
-func EvaluateAvailableNetworks(data SwitchData, a AzureNetworks) ([]string, error) {
+func EvaluateAvailableNetworks(data SwitchData, a AzureNetData) ([]string, error) {
 	var available []string
 	ret, err := ReturnNetworks(data)
 	if err != nil {
@@ -129,7 +162,7 @@ func EvaluateAvailableNetworks(data SwitchData, a AzureNetworks) ([]string, erro
 	}
 
 	for _, v := range ret {
-		for _, b := range a.Value {
+		for _, b := range a {
 			for _, z := range b.Properties.AddressSpace.AddressPrefixes {
 				if z != v {
 					available = append(available, v)
@@ -137,7 +170,22 @@ func EvaluateAvailableNetworks(data SwitchData, a AzureNetworks) ([]string, erro
 			}
 		}
 	}
-	return available, nil
+
+	keys := make(map[string]bool)
+	var list []string
+
+	// If the key(values of the slice) is not equal
+	// to the already present value in new slice (list)
+	// then we append it. else we jump on another element.
+	for _, entry := range available {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+
+	//fmt.Println(list)
+	return list, nil
 }
 
 func RunAll(data SwitchData, t TokenBuilder, n Subscription) (string, error) {
@@ -146,14 +194,12 @@ func RunAll(data SwitchData, t TokenBuilder, n Subscription) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	for _, a := range x {
-		eval, err := EvaluateAvailableNetworks(data, a)
-		if err != nil {
-			return "", err
-		}
-		for _, m := range eval {
-			grail = append(grail, m)
-		}
+	eval, err := EvaluateAvailableNetworks(data, x)
+	if err != nil {
+		return "", err
+	}
+	for _, m := range eval {
+		grail = append(grail, m)
 	}
 	randomIndex := rand.Intn(len(grail))
 
