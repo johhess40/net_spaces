@@ -26,7 +26,6 @@ var addressCmd = &cobra.Command{
 	Short: "display returns data about the spoke you will be deploying",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Generating software defined network data!!!!!")
 		token, err := get_networking.ExecToken()
 		if err != nil {
 			log.Fatal(err)
