@@ -137,6 +137,7 @@ func EvaluateAvailableNetworks(data SwitchData, a AzureNetworks) ([]string, erro
 			}
 		}
 	}
+	fmt.Println(available)
 	return available, nil
 }
 
