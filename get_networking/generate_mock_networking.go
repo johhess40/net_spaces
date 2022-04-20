@@ -68,12 +68,20 @@ func MakeTheSwitch(s SwitchData) ([]string, error) {
 func BuildGrandeNetworks(a SwitchData) ([]string, error) {
 	var s []string
 	s = append(s, a.Space)
+	spl := strings.Split(a.Space, ".")
+
 	for i := 0; i < 354; i++ {
-		spl := strings.Split(a.Space, ".")
-		next := strings.Replace(spl[2], spl[2], strconv.Itoa(i+1), 2)
-		spl[2] = next
-		joined := strings.Join(spl, ".")
-		s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+		if spl[2] != "0" {
+			next, _ := strconv.Atoi(spl[2])
+			spl[2] = strconv.Itoa(next + i)
+			joined := strings.Join(spl, ".")
+			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+		} else if spl[2] == "0" {
+			next := strings.Replace(spl[2], spl[2], strconv.Itoa(i+1), 2)
+			spl[2] = next
+			joined := strings.Join(spl, ".")
+			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+		}
 	}
 	if len(s) == 0 {
 		return s, fmt.Errorf("not able to build any grande address spaces in BuildGrandeNetworks")
