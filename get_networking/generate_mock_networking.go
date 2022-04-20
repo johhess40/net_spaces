@@ -85,9 +85,14 @@ func BuildGrandeNetworks(a SwitchData) ([]string, error) {
 //BuildVentiNetworks builds a 20oz virtual network
 func BuildVentiNetworks(a SwitchData) ([]string, error) {
 	var s []string
+	spl := strings.Split(a.Space, ".")
 	for i := 0; i < 128; i++ {
-		if i%2 == 0 {
-			spl := strings.Split(a.Space, ".")
+		if i%2 == 0 && spl[2] != "0" {
+			next, _ := strconv.Atoi(spl[2])
+			spl[2] = strconv.Itoa(next + i)
+			joined := strings.Join(spl, ".")
+			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+		} else if i%2 == 0 && spl[2] == "0" {
 			next := strings.Replace(spl[2], spl[2], strconv.Itoa(i), 2)
 			spl[2] = next
 			joined := strings.Join(spl, ".")
