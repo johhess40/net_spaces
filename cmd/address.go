@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/johhess40/net_spaces/get_networking"
+	net "github.com/johhess40/net_spaces/get_networking"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -17,7 +17,7 @@ type DisplayData struct {
 }
 
 var (
-	Switch get_networking.SwitchData
+	Switch net.SwitchData
 )
 
 // displayCmd represents the display command
@@ -26,11 +26,11 @@ var addressCmd = &cobra.Command{
 	Short: "display returns data about the spoke you will be deploying",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		token, err := get_networking.ExecToken()
+		token, err := net.ExecToken()
 		if err != nil {
 			log.Fatal(err)
 		}
-		entry, errEntry := get_networking.Entry(Switch, token)
+		entry, errEntry := net.Entry(Switch, token)
 		if errEntry != nil {
 			return
 		}
