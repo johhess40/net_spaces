@@ -7,6 +7,9 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 //AzureNetworks contains data about the virtual networks per subscription in Azure
@@ -124,6 +127,7 @@ func ReturnNetworks(s SwitchData) ([]string, error) {
 	var err error
 
 	switch s.Region {
+
 	case "westus2":
 		n, err = MakeTheSwitch(s)
 		if err != nil {
@@ -131,6 +135,7 @@ func ReturnNetworks(s SwitchData) ([]string, error) {
 		}
 
 		return n, nil
+
 	case "eastus2":
 		n, err = MakeTheSwitch(s)
 		if err != nil {
@@ -201,9 +206,20 @@ func RunAll(data SwitchData, t TokenBuilder, n Subscription) (string, error) {
 	for _, m := range eval {
 		grail = append(grail, m)
 	}
-	randomIndex := rand.Intn(len(grail))
 
-	return grail[randomIndex], nil
+	randomIndexString := strconv.Itoa(rand.Intn(time.Now().Nanosecond()))
+	var num int
+	nextRandom := strings.Split(randomIndexString, "")
+	for _, v := range nextRandom {
+		num, err = strconv.Atoi(v)
+		if err != nil {
+			return "", err
+		}
+		if num < len(grail) {
+			return grail[num], nil
+		}
+	}
+	return grail[num], nil
 }
 
 func JsonReturn(data SwitchData, t TokenBuilder) (struct {
