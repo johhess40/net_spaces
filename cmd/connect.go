@@ -10,33 +10,9 @@ import (
 	"log"
 )
 
-
 var (
 	Connection net.Connect
 )
-
-func (c get_networkingConnect) Generate() (struct {
-	Token net.TokenBuilder
-	Conn  string
-}, error) {
-	token, err := net.ExecToken()
-	if err != nil {
-		return struct{	Token net.TokenBuilder
-			Conn  string}{}, err
-	}
-
-	con, err := Connection.Address(Switch, token)
-	if err != nil {
-		return struct{	Token net.TokenBuilder
-			Conn  string}{}, err
-	}
-
-	return struct{	Token net.TokenBuilder
-		Conn  string}{
-		Token: token,
-		Conn: con,
-	}, nil
-}
 
 // connectCmd represents the connect command
 var connectCmd = &cobra.Command{
@@ -44,21 +20,19 @@ var connectCmd = &cobra.Command{
 	Short: "Tests data about an Azure virtual hub connection",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		gen, error := Connection.
-
-		switches, err := net.MakeConnectionSwitches(con, Connection, token)
+		token, err := net.ExecToken()
 		if err != nil {
 			return
 		}
-
-		connectable, err := net.ReturnConnectable(switches)
+		address, err := Connection.Address(Switch, token)
 		if err != nil {
 			return
 		}
-
-		fmt.Printf("%s", connectable)
-
+		generate, err := Connection.Generate(address, Connection)
+		if err != nil {
+			return
+		}
+		fmt.Printf("%s", generate)
 	},
 }
 

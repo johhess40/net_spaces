@@ -21,7 +21,7 @@ type Connect struct {
 	HubType string
 }
 
-func (s Connect) Address(sw SwitchData, t TokenBuilder) (string, error) {
+func (c Connect) Address(sw SwitchData, t TokenBuilder) (string, error) {
 	entry, errEntry := Entry(sw, t)
 	if errEntry != nil {
 		return "", errEntry
@@ -29,18 +29,44 @@ func (s Connect) Address(sw SwitchData, t TokenBuilder) (string, error) {
 	return fmt.Sprintf("%s", strings.TrimSpace(entry)), nil
 }
 
-func (s Connect) CheckLength() error {
-	if len(s.HubId) == 0 || len(s.HubType) == 0 {
+func (c Connect) Gen(sw SwitchData, t TokenBuilder) (string, error) {
+	entry, errEntry := Entry(sw, t)
+	if errEntry != nil {
+		return "", errEntry
+	}
+	return fmt.Sprintf("%s", strings.TrimSpace(entry)), nil
+}
+
+func (c Connect) Generate(j string, con Connect) (string, error) {
+	t, err := ExecToken()
+	if err != nil {
+		return "", err
+	}
+
+	switches, err := MakeConnectionSwitches(j, con, t)
+	if err != nil {
+		return "", err
+	}
+
+	connectable, err := ReturnConnectable(switches)
+	if err != nil {
+		return "", err
+	}
+	return connectable, nil
+}
+
+func (c Connect) CheckLength() error {
+	if len(c.HubId) == 0 || len(c.HubType) == 0 {
 		return fmt.Errorf("all flags must have a value")
 	} else {
 		return nil
 	}
 }
 
-func (s Connect) CheckValues() error {
-	if len(strings.Split(s.HubId, "/"))%8 != 0 {
+func (c Connect) CheckValues() error {
+	if len(strings.Split(c.HubId, "/"))%8 != 0 {
 		return fmt.Errorf("hub id must be divisible by 8 your hub id is wrong see video here on how to properly enter resource id's => https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-	} else if s.HubType != "vhub" || s.HubType != "vnet" {
+	} else if c.HubType != "vhub" || c.HubType != "vnet" {
 		return fmt.Errorf("hub type must be vhub or vnet")
 	} else {
 		return nil
