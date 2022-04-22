@@ -6,46 +6,36 @@ package cmd
 import (
 	"fmt"
 	net "github.com/johhess40/net_spaces/get_networking"
-	"log"
-	"strings"
-
 	"github.com/spf13/cobra"
+	"log"
 )
 
-type Connect net.Connect
 
 var (
-	Connection Connect
+	Connection net.Connect
 )
 
-func (s Connect) Address(sw net.SwitchData) (string, error) {
+func (c get_networkingConnect) Generate() (struct {
+	Token net.TokenBuilder
+	Conn  string
+}, error) {
 	token, err := net.ExecToken()
 	if err != nil {
-		return "", err
+		return struct{	Token net.TokenBuilder
+			Conn  string}{}, err
 	}
-	entry, errEntry := net.Entry(Switch, token)
-	if errEntry != nil {
-		return "", err
-	}
-	return fmt.Sprintf("%s", strings.TrimSpace(entry)), nil
-}
 
-func (s Connect) CheckLength() error {
-	if len(s.HubId) == 0 || len(s.HubType) == 0 {
-		return fmt.Errorf("all flags must have a value")
-	} else {
-		return nil
+	con, err := Connection.Address(Switch, token)
+	if err != nil {
+		return struct{	Token net.TokenBuilder
+			Conn  string}{}, err
 	}
-}
 
-func (s Connect) CheckValues() error {
-	if len(strings.Split(s.HubId, "/"))%8 != 0 {
-		return fmt.Errorf("hub id must be divisible by 8 your hub id is wrong see video here on how to properly enter resource id's => https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-	} else if s.HubType != "vhub" || s.HubType != "vnet" {
-		return fmt.Errorf("hub type must be vhub or vnet")
-	} else {
-		return nil
-	}
+	return struct{	Token net.TokenBuilder
+		Conn  string}{
+		Token: token,
+		Conn: con,
+	}, nil
 }
 
 // connectCmd represents the connect command
@@ -54,10 +44,20 @@ var connectCmd = &cobra.Command{
 	Short: "Tests data about an Azure virtual hub connection",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		con, err := Connection.Address(Switch)
+
+		gen, error := Connection.
+
+		switches, err := net.MakeConnectionSwitches(con, Connection, token)
 		if err != nil {
-			log.Fatal(err)
+			return
 		}
+
+		connectable, err := net.ReturnConnectable(switches)
+		if err != nil {
+			return
+		}
+
+		fmt.Printf("%s", connectable)
 
 	},
 }

@@ -5,11 +5,46 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
+
+type Confirmed struct {
+	Region             string
+	ClientId           string
+	TenantId           string
+	AddressSpace       string
+	RemoteConnectionId string
+}
 
 type Connect struct {
 	HubId   string
 	HubType string
+}
+
+func (s Connect) Address(sw SwitchData, t TokenBuilder) (string, error) {
+	entry, errEntry := Entry(sw, t)
+	if errEntry != nil {
+		return "", errEntry
+	}
+	return fmt.Sprintf("%s", strings.TrimSpace(entry)), nil
+}
+
+func (s Connect) CheckLength() error {
+	if len(s.HubId) == 0 || len(s.HubType) == 0 {
+		return fmt.Errorf("all flags must have a value")
+	} else {
+		return nil
+	}
+}
+
+func (s Connect) CheckValues() error {
+	if len(strings.Split(s.HubId, "/"))%8 != 0 {
+		return fmt.Errorf("hub id must be divisible by 8 your hub id is wrong see video here on how to properly enter resource id's => https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+	} else if s.HubType != "vhub" || s.HubType != "vnet" {
+		return fmt.Errorf("hub type must be vhub or vnet")
+	} else {
+		return nil
+	}
 }
 
 type NetData struct {
@@ -233,18 +268,71 @@ func ParseVnetConnections(hubId string, t TokenBuilder) ([]string, error) {
 	return network.VnetSpaces, nil
 }
 
-func MakeConnectionSwitches(hubId string, c Connect, t TokenBuilder) {
+func MakeConnectionSwitches(j string, c Connect, t TokenBuilder) (Confirmed, error) {
+	var conf Confirmed
 	switch c.HubType {
 	case "vhub":
-		connections, err := ParseHubConnections()
+		connections, err := ParseHubConnections(c.HubId, t)
 		if err != nil {
-			return
+			return conf, err
 		}
 
-	case "vnet":
-		connections, err := ParseVnetConnections()
+		jsonData := struct {
+			Region       string
+			ClientId     string
+			TenantId     string
+			AddressSpace string
+		}{}
+
+		err = json.Unmarshal([]byte(j), &jsonData)
 		if err != nil {
-			return
+			return conf, err
 		}
+
+		for _, v := range connections {
+			if v == jsonData.AddressSpace {
+				return conf, err
+			}
+		}
+		conf.RemoteConnectionId = c.HubId
+
+		return conf, nil
+	case "vnet":
+		connections, err := ParseVnetConnections(c.HubId, t)
+		if err != nil {
+			return conf, err
+		}
+
+		jsonData := struct {
+			Region       string
+			ClientId     string
+			TenantId     string
+			AddressSpace string
+		}{}
+
+		err = json.Unmarshal([]byte(j), &jsonData)
+		if err != nil {
+			return conf, err
+		}
+
+		for _, v := range connections {
+			if v == jsonData.AddressSpace {
+				return conf, err
+			}
+		}
+		conf.RemoteConnectionId = c.HubId
+
+		return conf, nil
+	default:
+		return conf, nil
 	}
+}
+
+func ReturnConnectable(c Confirmed) (string, error) {
+	s, err := json.Marshal(c)
+	if err != nil {
+		return "", fmt.Errorf(err.Error())
+	}
+
+	return string(s), nil
 }
