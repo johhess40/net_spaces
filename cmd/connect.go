@@ -12,10 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Connect struct {
-	HubId   string
-	HubType string
-}
+type Connect net.Connect
 
 var (
 	Connection Connect
