@@ -23,7 +23,7 @@ var (
 // displayCmd represents the display command
 var addressCmd = &cobra.Command{
 	Use:   "address",
-	Short: "display returns data about the spoke you will be deploying",
+	Short: "address returns data about the spoke you will be deploying",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		token, err := net.ExecToken()
@@ -41,26 +41,26 @@ var addressCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(addressCmd)
 	addressCmd.PersistentFlags().StringVarP(&Switch.Size, "size", "s", "grande", "What size spoke shall we deploy?")
-	err := addressCmd.MarkFlagRequired("size")
+	err := addressCmd.MarkPersistentFlagRequired("size")
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 	addressCmd.PersistentFlags().StringVarP(&Switch.Space, "space", "z", "", "What is the overall space for the region?")
-	err = addressCmd.MarkFlagRequired("space")
+	err = addressCmd.MarkPersistentFlagRequired("space")
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 
 	addressCmd.PersistentFlags().StringVarP(&Switch.Region, "region", "r", "", "Where's your spoke at?")
-	err = addressCmd.MarkFlagRequired("region")
+	err = addressCmd.MarkPersistentFlagRequired("region")
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 
 	addressCmd.PersistentFlags().StringVarP(&Switch.Cidr, "cidr", "c", "", "Whats your spokes cidr?")
-	err = addressCmd.MarkFlagRequired("region")
+	err = addressCmd.MarkPersistentFlagRequired("cidr")
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 	// Here you will define your flags and configuration settings.
 

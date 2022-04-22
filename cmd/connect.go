@@ -38,32 +38,21 @@ var connectCmd = &cobra.Command{
 
 func init() {
 	addressCmd.AddCommand(connectCmd)
-	connectCmd.Flags().StringVarP(&Connection.HubId, "hub-id", "h", "", "the virtual hub id to connect the vnet to")
+	connectCmd.Flags().StringVarP(&Connection.HubId, "hub-id", "i", "", "the virtual hub id to connect the vnet to")
 	err := connectCmd.MarkFlagRequired("hub-id")
-	c := Connection.CheckLength()
-	if err != nil || c != nil {
-		if err == nil {
-			err = Connection.CheckLength()
-			log.Fatal(err)
-		} else {
-			log.Fatal(err)
-		}
+	if err != nil {
+		log.Fatal(err)
 	}
-	connectCmd.Flags().StringVarP(&Connection.HubType, "hub-type", "t", "virtual-hub", "the virtual hub id to connect the vnet to")
+	connectCmd.Flags().StringVarP(&Connection.HubType, "hub-type", "t", "", "the virtual hub id to connect the vnet to")
 	err = connectCmd.MarkFlagRequired("hub-type")
-	if err != nil || c != nil {
-		if err == nil {
-			err = Connection.CheckLength()
-			log.Fatal(err)
-		} else {
-			log.Fatal(err)
-		}
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	ch := Connection.CheckValues()
-	if ch != nil {
-		log.Fatal(ch)
-	}
+	//ch := Connection.CheckValues()
+	//if ch != nil {
+	//	log.Fatal(ch)
+	//}
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
