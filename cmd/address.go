@@ -8,6 +8,7 @@ import (
 	"fmt"
 	net "github.com/johhess40/net_spaces/get_networking"
 	"log"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +35,7 @@ var addressCmd = &cobra.Command{
 		if errEntry != nil {
 			return
 		}
-		fmt.Printf("%s", entry)
+		fmt.Printf("%s", strings.TrimSpace(entry))
 	},
 }
 

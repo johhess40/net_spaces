@@ -1,5 +1,23 @@
-const { Octokit } = require("@octokit/core");
+const { graphql } = require("@octokit/graphql");
+// or: import { graphql } from "@octokit/graphql";
 
-let version = Octokit.VERSION
-
-console.log(version)
+const { repository } = await graphql(
+    `
+    {
+      repository(owner: "octokit", name: "graphql.js") {
+        issues(last: 3) {
+          edges {
+            node {
+              title
+            }
+          }
+        }
+      }
+    }
+  `,
+    {
+        headers: {
+            authorization: `token secret123`,
+        },
+    }
+);
