@@ -63,16 +63,6 @@ func (c Connect) CheckLength() error {
 	}
 }
 
-func (c Connect) CheckValues() error {
-	if len(strings.Split(c.HubId, "/"))%2 != 0 {
-		return fmt.Errorf("hub id must be divisible by 2 your hub id is wrong see video here on how to properly enter resource id's => https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-	} else if c.HubType != "vhub" || c.HubType != "vnet" {
-		return fmt.Errorf("hub type must be vhub or vnet")
-	} else {
-		return nil
-	}
-}
-
 type NetData struct {
 	VnetIds      []string
 	VnetSpaces   []string
