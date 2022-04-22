@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 John J. Hession
-
 */
 package cmd
 
@@ -41,25 +40,24 @@ var addressCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(addressCmd)
-	addressCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	addressCmd.Flags().StringVarP(&Switch.Size, "size", "s", "grande", "What size spoke shall we deploy?")
+	addressCmd.PersistentFlags().StringVarP(&Switch.Size, "size", "s", "grande", "What size spoke shall we deploy?")
 	err := addressCmd.MarkFlagRequired("size")
 	if err != nil {
 		return
 	}
-	addressCmd.Flags().StringVarP(&Switch.Space, "space", "z", "", "What is the overall space for the region?")
+	addressCmd.PersistentFlags().StringVarP(&Switch.Space, "space", "z", "", "What is the overall space for the region?")
 	err = addressCmd.MarkFlagRequired("space")
 	if err != nil {
 		return
 	}
 
-	addressCmd.Flags().StringVarP(&Switch.Region, "region", "r", "", "Where's your spoke at?")
+	addressCmd.PersistentFlags().StringVarP(&Switch.Region, "region", "r", "", "Where's your spoke at?")
 	err = addressCmd.MarkFlagRequired("region")
 	if err != nil {
 		return
 	}
 
-	addressCmd.Flags().StringVarP(&Switch.Cidr, "cidr", "c", "", "Whats your spokes cidr?")
+	addressCmd.PersistentFlags().StringVarP(&Switch.Cidr, "cidr", "c", "", "Whats your spokes cidr?")
 	err = addressCmd.MarkFlagRequired("region")
 	if err != nil {
 		return

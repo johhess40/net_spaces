@@ -5,6 +5,8 @@ package cmd
 
 import (
 	"fmt"
+	net "github.com/johhess40/net_spaces/get_networking"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -23,13 +25,21 @@ var connectCmd = &cobra.Command{
 	Short: "Tests data about an Azure virtual hub connection",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("connect called")
+		token, err := net.ExecToken()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf(token.TenantId)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(connectCmd)
-	connectCmd.PersistentFlags().StringVarP(&Connection.HubId, "hub-id", "h", "", "the virtual hub id to connect the vnet to")
+	addressCmd.AddCommand(connectCmd)
+	connectCmd.Flags().StringVarP(&Connection.HubId, "hub-id", "h", "", "the virtual hub id to connect the vnet to")
+	err := connectCmd.MarkFlagRequired("hub-id")
+	if err != nil {
+		return
+	}
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
