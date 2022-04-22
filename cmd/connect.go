@@ -41,6 +41,16 @@ func (s Connect) CheckLength() error {
 	}
 }
 
+func (s Connect) CheckValues() error {
+	if len(strings.Split(s.HubId, "/"))%8 != 0 {
+		return fmt.Errorf("hub id must be divisible by 8 your hub id is wrong see video here on how to properly enter resource id's => https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+	} else if s.HubType != "vhub" || s.HubType != "vnet" {
+		return fmt.Errorf("hub type must be vhub or vnet")
+	} else {
+		return nil
+	}
+}
+
 // connectCmd represents the connect command
 var connectCmd = &cobra.Command{
 	Use:   "connect",
@@ -77,6 +87,11 @@ func init() {
 		} else {
 			log.Fatal(err)
 		}
+	}
+
+	ch := Connection.CheckValues()
+	if ch != nil {
+		log.Fatal(ch)
 	}
 	// Here you will define your flags and configuration settings.
 

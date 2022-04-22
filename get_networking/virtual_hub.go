@@ -136,6 +136,9 @@ func GetVirtualNetworkPeerings(hubId string, t TokenBuilder) (VnetConnections, e
 	return vnetConnections, nil
 }
 
-func CheckReservations() {
+func ParseHubConnections() {
+
+}
+func ParseVnetConnections() {
 
 }
