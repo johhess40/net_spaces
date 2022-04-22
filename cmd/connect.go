@@ -30,9 +30,9 @@ var connectCmd = &cobra.Command{
 		}
 		generate, err := Connection.Generate(address, Connection)
 		if err != nil {
-			return
+			log.Fatal(err)
 		}
-		fmt.Printf("%s", generate)
+		fmt.Printf(generate)
 	},
 }
 
@@ -43,7 +43,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	connectCmd.Flags().StringVarP(&Connection.HubType, "hub-type", "t", "", "the virtual hub id to connect the vnet to")
+	connectCmd.Flags().StringVarP(&Connection.HubType, "hub-type", "t", "", "the virtual hub type to connect the vnet to")
 	err = connectCmd.MarkFlagRequired("hub-type")
 	if err != nil {
 		log.Fatal(err)
