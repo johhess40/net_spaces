@@ -22,11 +22,11 @@ remove_zipball(){
   unzip -o $DOWNLOAD_VERSION.zip  -d app
   mv -f ./app/*/.[!.]* ./app
   mv -f ./app/*/* ./app
-  AUTH=$(curl --silent "https://api.github.com/repos/johhess40/net_spaces/releases/latest" | jq .author.login | tr -d '"')
+  AUTH=$(curl --silent "https://api.github.com/repos/$1/releases/latest" | jq .author.login | tr -d '"')
   echo "$AUTH"
   cd ./app && ls | grep $AUTH | xargs rm -rf
 
 }
 
 make_download "$LOOKUP"
-remove_zipball
+remove_zipball "$LOOKUP"
