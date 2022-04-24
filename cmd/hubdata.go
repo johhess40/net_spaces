@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 John
-
 */
 package cmd
 
@@ -11,25 +10,34 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type HubBuilder struct {
+	Id      string
+	OutType string
+}
+
+var (
+	Hub HubBuilder
+)
+
 // hubdataCmd represents the hubdata command
 var hubdataCmd = &cobra.Command{
 	Use:   "hub-data",
 	Short: "hub-data returns data bout the hub that we want to connect to",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("hubdata called")
+		fmt.Println("hub-data called")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(hubdataCmd)
-	hubdataCmd.Flags().StringVarP(&Connection.HubId, "hub-id", "h", "", "the virtual hub id to connect the vnet to")
-	err := connectCmd.MarkFlagRequired("hub-id")
+	hubdataCmd.Flags().StringVarP(&Hub.Id, "hub-id", "h", "", "the virtual hub id to connect the vnet to")
+	err := hubdataCmd.MarkFlagRequired("hub-id")
 	if err != nil {
 		log.Fatal(err)
 	}
-	hubdataCmd.Flags().StringVarP(&Connection.HubType, "out-type", "o", "", "output type for hub data being returned(hcl,json,yml)")
-	err = connectCmd.MarkFlagRequired("out-type")
+	hubdataCmd.Flags().StringVarP(&Hub.OutType, "out-type", "o", "", "output type for hub data being returned(hcl,json,yml)")
+	err = hubdataCmd.MarkFlagRequired("out-type")
 	if err != nil {
 		log.Fatal(err)
 	}
