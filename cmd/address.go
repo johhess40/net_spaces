@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 John J. Hession
-
 */
 package cmd
 
@@ -8,6 +7,7 @@ import (
 	"fmt"
 	net "github.com/johhess40/net_spaces/get_networking"
 	"log"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -23,7 +23,7 @@ var (
 // displayCmd represents the display command
 var addressCmd = &cobra.Command{
 	Use:   "address",
-	Short: "display returns data about the spoke you will be deploying",
+	Short: "address returns data about the spoke you will be deploying",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		token, err := net.ExecToken()
@@ -34,34 +34,33 @@ var addressCmd = &cobra.Command{
 		if errEntry != nil {
 			return
 		}
-		fmt.Printf("%s", entry)
+		fmt.Printf("%s", strings.TrimSpace(entry))
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(addressCmd)
-	addressCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	addressCmd.Flags().StringVarP(&Switch.Size, "size", "s", "grande", "What size spoke shall we deploy?")
-	err := addressCmd.MarkFlagRequired("size")
+	addressCmd.PersistentFlags().StringVarP(&Switch.Size, "size", "s", "grande", "What size spoke shall we deploy?")
+	err := addressCmd.MarkPersistentFlagRequired("size")
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
-	addressCmd.Flags().StringVarP(&Switch.Space, "space", "z", "", "What is the overall space for the region?")
-	err = addressCmd.MarkFlagRequired("space")
+	addressCmd.PersistentFlags().StringVarP(&Switch.Space, "space", "z", "", "What is the overall space for the region?")
+	err = addressCmd.MarkPersistentFlagRequired("space")
 	if err != nil {
-		return
-	}
-
-	addressCmd.Flags().StringVarP(&Switch.Region, "region", "r", "", "Where's your spoke at?")
-	err = addressCmd.MarkFlagRequired("region")
-	if err != nil {
-		return
+		log.Fatal(err)
 	}
 
-	addressCmd.Flags().StringVarP(&Switch.Cidr, "cidr", "c", "", "Whats your spokes cidr?")
-	err = addressCmd.MarkFlagRequired("region")
+	addressCmd.PersistentFlags().StringVarP(&Switch.Region, "region", "r", "", "Where's your spoke at?")
+	err = addressCmd.MarkPersistentFlagRequired("region")
 	if err != nil {
-		return
+		log.Fatal(err)
+	}
+
+	addressCmd.PersistentFlags().StringVarP(&Switch.Cidr, "cidr", "c", "", "Whats your spokes cidr?")
+	err = addressCmd.MarkPersistentFlagRequired("cidr")
+	if err != nil {
+		log.Fatal(err)
 	}
 	// Here you will define your flags and configuration settings.
 
