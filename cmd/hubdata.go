@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	net "github.com/johhess40/net_spaces/get_networking"
+	"github.com/johhess40/net_spaces/parsing"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -38,6 +39,7 @@ var hubdataCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 			fmt.Println(data)
+			parsing.WriteHubConnection()
 		case "vnet":
 			data, err := net.GetVirtualNetworkHubData(Hub.Id, token)
 			if err != nil {
