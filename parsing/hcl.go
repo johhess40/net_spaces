@@ -3,6 +3,7 @@ package parsing
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	net "github.com/johhess40/net_spaces/get_networking"
 	"github.com/zclconf/go-cty/cty"
@@ -44,7 +45,7 @@ type Connection struct{}
 func WriteHubConnection(s string, hub net.VirtualHub) {
 	writer := hclwrite.NewFile()
 
-	hclFile, err := os.Create("connect.tf")
+	hclFile, err := os.OpenFile("connect.tf", os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,9 +67,15 @@ func WriteHubConnection(s string, hub net.VirtualHub) {
 	build.SetAttributeValue("virtual_hub_id", cty.StringVal(fmt.Sprintf("%s", hub.Id)))
 	build.SetAttributeValue("remote_virtual_network_id", cty.StringVal(fmt.Sprintf("%s", s)))
 
-	//route := build.AppendNewBlock("routing",[]string{})
-	//
-	//r := route.Body()
+	r := rootBod.AppendNewBlock("output", []string{"connection"})
+	value := r.Body()
+
+	value.SetAttributeRaw("value", hclwrite.Tokens{
+		{
+			Type:  hclsyntax.TokenIdent,
+			Bytes: []byte(`azurerm_virtual_hub_connection.connect.id`),
+		},
+	})
 
 	_, err = hclFile.WriteAt(writer.Bytes(), seek)
 	if err != nil {
@@ -79,7 +86,7 @@ func WriteHubConnection(s string, hub net.VirtualHub) {
 func WriteVnetConnection(s string, hub net.VirtualHub) {
 	writer := hclwrite.NewFile()
 
-	hclFile, err := os.Create("connect.tf")
+	hclFile, err := os.OpenFile("connect.tf", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
