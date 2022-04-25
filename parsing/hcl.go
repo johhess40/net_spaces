@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/hashicorp/hcl/v2/hclwrite"
+	net "github.com/johhess40/net_spaces/get_networking"
 	"github.com/zclconf/go-cty/cty"
 	"log"
 	"os"
@@ -40,7 +41,7 @@ type Vhub struct{}
 
 type Connection struct{}
 
-func WriteHubConnection() {
+func WriteHubConnection(s string, hub net.VirtualHub) {
 	writer := hclwrite.NewFile()
 
 	hclFile, err := os.Create("connect.tf")
@@ -62,12 +63,54 @@ func WriteHubConnection() {
 	u := uuid.New()
 
 	build.SetAttributeValue("name", cty.StringVal(fmt.Sprintf("%s", u)))
-	build.SetAttributeValue("virtual_hub_id", cty.StringVal(fmt.Sprintf("%s", u)))
-	build.SetAttributeValue("remote_virtual_network_id", cty.StringVal(fmt.Sprintf("%s", u)))
+	build.SetAttributeValue("virtual_hub_id", cty.StringVal(fmt.Sprintf("%s", hub.Id)))
+	build.SetAttributeValue("remote_virtual_network_id", cty.StringVal(fmt.Sprintf("%s", s)))
+
+	//route := build.AppendNewBlock("routing",[]string{})
+	//
+	//r := route.Body()
+
 	_, err = hclFile.WriteAt(writer.Bytes(), seek)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func Request() {}
+func WriteVnetConnection(s string, hub net.VirtualHub) {
+	writer := hclwrite.NewFile()
+
+	hclFile, err := os.Create("connect.tf")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	seek, errseek := hclFile.Seek(0, 2)
+	if errseek != nil {
+		log.Fatal(errseek)
+	}
+
+	rootBod := writer.Body()
+
+	b := rootBod.AppendNewBlock("resource", []string{"azurerm_virtual_hub_connection", "connect"})
+
+	build := b.Body()
+
+	u := uuid.New()
+
+	build.SetAttributeValue("name", cty.StringVal(fmt.Sprintf("%s", u)))
+	build.SetAttributeValue("virtual_hub_id", cty.StringVal(fmt.Sprintf("%s", hub.Id)))
+	build.SetAttributeValue("remote_virtual_network_id", cty.StringVal(fmt.Sprintf("%s", s)))
+
+	//route := build.AppendNewBlock("routing",[]string{})
+	//
+	//r := route.Body()
+
+	_, err = hclFile.WriteAt(writer.Bytes(), seek)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Request(remoteId string, hub net.VirtualHub) {
+	WriteHubConnection(remoteId, hub)
+}

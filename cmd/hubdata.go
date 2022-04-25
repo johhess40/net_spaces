@@ -13,9 +13,10 @@ import (
 )
 
 type HubBuilder struct {
-	Id      string
-	Type    string
-	OutType string
+	Id       string
+	Type     string
+	OutType  string
+	RemoteId string
 }
 
 var (
@@ -39,7 +40,7 @@ var hubdataCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 			fmt.Println(data)
-			parsing.WriteHubConnection()
+			parsing.Request(Hub.RemoteId, data)
 		case "vnet":
 			data, err := net.GetVirtualNetworkHubData(Hub.Id, token)
 			if err != nil {
@@ -60,6 +61,11 @@ func init() {
 	rootCmd.AddCommand(hubdataCmd)
 	hubdataCmd.Flags().StringVarP(&Hub.Id, "hub-id", "i", "null", "the virtual hub id to connect the vnet to")
 	err := hubdataCmd.MarkFlagRequired("hub-id")
+	if err != nil {
+		log.Fatal(err)
+	}
+	hubdataCmd.Flags().StringVarP(&Hub.RemoteId, "remote-id", "r", "null", "the spoke vnet id to connect the hub to")
+	err = hubdataCmd.MarkFlagRequired("remote-id")
 	if err != nil {
 		log.Fatal(err)
 	}
