@@ -24,7 +24,7 @@ stages:
               go version 
               go env
               go install 
-              ls ~/go/bin 
-              ls ~
+              go build -v ./...
+              go test -v ./...
             displayName: Go Version and Go Build
 
