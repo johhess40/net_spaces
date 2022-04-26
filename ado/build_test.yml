@@ -24,6 +24,6 @@ stages:
               go version 
               go env
               go install 
-              netspaces --help
+              ls ~/go/bin 
             displayName: Go Version and Go Build
 
