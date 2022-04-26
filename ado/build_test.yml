@@ -25,7 +25,6 @@ stages:
               go env
               go install 
               ls ~/go/bin 
-              export PATH=$PATH:~/go/bin
-              netspaces --help
+              mv ~go/bin/netspaces ~/local/bin
             displayName: Go Version and Go Build
 
