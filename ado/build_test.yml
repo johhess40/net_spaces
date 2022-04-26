@@ -23,5 +23,7 @@ stages:
           - script: |
               go version 
               go env
+              go install 
+              netspaces --help
             displayName: Go Version and Go Build
 
