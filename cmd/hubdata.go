@@ -5,14 +5,18 @@ package cmd
 
 import (
 	"fmt"
+	net "github.com/johhess40/net_spaces/get_networking"
+	"github.com/johhess40/net_spaces/parsing"
 	"log"
 
 	"github.com/spf13/cobra"
 )
 
 type HubBuilder struct {
-	Id      string
-	OutType string
+	Id       string
+	Type     string
+	OutType  string
+	RemoteId string
 }
 
 var (
@@ -25,18 +29,52 @@ var hubdataCmd = &cobra.Command{
 	Short: "hub-data returns data bout the hub that we want to connect to",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("hub-data called")
+		token, err := net.ExecToken()
+		if err != nil {
+			return
+		}
+		switch Hub.Type {
+		case "vhub":
+			data, err := net.GetVirtualHubData(Hub.Id, token)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(data)
+			parsing.Request(Hub.RemoteId, data)
+		case "vnet":
+			data, err := net.GetVirtualNetworkHubData(Hub.Id, token)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(data)
+		default:
+			data, err := net.GetVirtualHubData(Hub.Id, token)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(data)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(hubdataCmd)
-	hubdataCmd.Flags().StringVarP(&Hub.Id, "hub-id", "h", "", "the virtual hub id to connect the vnet to")
+	hubdataCmd.Flags().StringVarP(&Hub.Id, "hub-id", "i", "null", "the virtual hub id to connect the vnet to")
 	err := hubdataCmd.MarkFlagRequired("hub-id")
 	if err != nil {
 		log.Fatal(err)
 	}
-	hubdataCmd.Flags().StringVarP(&Hub.OutType, "out-type", "o", "", "output type for hub data being returned(hcl,json,yml)")
+	hubdataCmd.Flags().StringVarP(&Hub.RemoteId, "remote-id", "r", "null", "the spoke vnet id to connect the hub to")
+	err = hubdataCmd.MarkFlagRequired("remote-id")
+	if err != nil {
+		log.Fatal(err)
+	}
+	hubdataCmd.Flags().StringVarP(&Hub.Type, "hub-type", "t", "vhub", "hub type for lookup")
+	err = hubdataCmd.MarkFlagRequired("hub-type")
+	if err != nil {
+		log.Fatal(err)
+	}
+	hubdataCmd.Flags().StringVarP(&Hub.OutType, "out-type", "o", "json", "output type for hub data being returned(hcl,json,yml)")
 	err = hubdataCmd.MarkFlagRequired("out-type")
 	if err != nil {
 		log.Fatal(err)
