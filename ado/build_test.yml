@@ -25,6 +25,6 @@ stages:
               go env
               go install 
               ls ~/go/bin 
-              mv ~go/bin/net_spaces ~/local/bin
+              mv ~/go/bin/net_spaces ~/local/bin
             displayName: Go Version and Go Build
 
