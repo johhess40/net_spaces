@@ -41,4 +41,4 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }} 
         run: |
           go build 
-          ./net_spaces address --cidr /24 --region eastus2 --size grande --space 10.220.128.0
+          ./net_spaces address --cidr /26 --region eastus2 --size grande --space 10.220.0.0
