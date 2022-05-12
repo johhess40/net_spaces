@@ -69,18 +69,33 @@ func BuildGrandeNetworks(a SwitchData) ([]string, error) {
 	var s []string
 	s = append(s, a.Space)
 	spl := strings.Split(a.Space, ".")
-
-	for i := 0; i < 354; i++ {
-		if spl[2] != "0" {
-			next, _ := strconv.Atoi(spl[2])
-			spl[2] = strconv.Itoa(next + i)
-			joined := strings.Join(spl, ".")
-			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
-		} else if spl[2] == "0" {
-			next := strings.Replace(spl[2], spl[2], strconv.Itoa(i+1), 2)
-			spl[2] = next
-			joined := strings.Join(spl, ".")
-			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+	for i := 0; i < 4080; i++ {
+		morph := []string{
+			"16",
+			"32",
+			"48",
+			"64",
+			"80",
+			"96",
+			"112",
+			"128",
+			"144",
+			"160",
+			"176",
+			"192",
+			"208",
+			"224",
+			"240",
+		}
+		next, _ := strconv.Atoi(spl[2])
+		spl[2] = strconv.Itoa(next + 1)
+		joined := strings.Join(spl, ".")
+		s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+		for _, v := range morph {
+			m := strings.Split(joined, ".")
+			m[3] = strings.Replace(m[3], m[3], v, 1)
+			rejoin := strings.Join(m, ".")
+			s = append(s, fmt.Sprintf("%s%s", rejoin, a.Cidr))
 		}
 	}
 	if len(s) == 0 {
@@ -94,17 +109,21 @@ func BuildGrandeNetworks(a SwitchData) ([]string, error) {
 func BuildVentiNetworks(a SwitchData) ([]string, error) {
 	var s []string
 	spl := strings.Split(a.Space, ".")
-	for i := 0; i < 128; i++ {
-		if i%2 == 0 && spl[2] != "0" {
-			next, _ := strconv.Atoi(spl[2])
-			spl[2] = strconv.Itoa(next + i)
-			joined := strings.Join(spl, ".")
-			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
-		} else if i%2 == 0 && spl[2] == "0" {
-			next := strings.Replace(spl[2], spl[2], strconv.Itoa(i), 2)
-			spl[2] = next
-			joined := strings.Join(spl, ".")
-			s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+	for i := 0; i < 255; i++ {
+		morph := []string{
+			"64",
+			"128",
+			"192",
+		}
+		next, _ := strconv.Atoi(spl[2])
+		spl[2] = strconv.Itoa(next + 1)
+		joined := strings.Join(spl, ".")
+		s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
+		for _, v := range morph {
+			m := strings.Split(joined, ".")
+			m[3] = strings.Replace(m[3], m[3], v, 1)
+			rejoin := strings.Join(m, ".")
+			s = append(s, fmt.Sprintf("%s%s", rejoin, a.Cidr))
 		}
 	}
 	if len(s) == 0 {

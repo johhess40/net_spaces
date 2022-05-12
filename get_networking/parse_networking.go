@@ -133,13 +133,23 @@ func ReturnNetworks(s SwitchData) ([]string, error) {
 		if err != nil {
 			return n, fmt.Errorf(err.Error())
 		}
-
+		if s.Size == "venti" {
+			return n[:507], nil
+		} else if s.Size == "grande" {
+			return n[:2039], nil
+		}
 		return n, nil
 
 	case "eastus2":
 		n, err = MakeTheSwitch(s)
 		if err != nil {
 			return n, fmt.Errorf(err.Error())
+		}
+
+		if s.Size == "venti" {
+			return n[508:], nil
+		} else if s.Size == "grande" {
+			return n[2040:], nil
 		}
 
 		return n, nil
@@ -165,7 +175,6 @@ func EvaluateAvailableNetworks(data SwitchData, a AzureNetData) ([]string, error
 	if err != nil {
 		return available, err
 	}
-
 	for _, v := range ret {
 		for _, b := range a {
 			for _, z := range b.Properties.AddressSpace.AddressPrefixes {

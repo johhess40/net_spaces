@@ -1,0 +1,30 @@
+
+##Include branch 'main'
+trigger:
+  branches:
+    include:
+      - "main"
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: az-foundations-level-one
+
+stages:
+  - stage: GoBuildTest
+    displayName: Go Build And Test
+    jobs:
+      - job: GoTestBuild
+        displayName: Running Go Tests
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - script: |
+              go version 
+              go env
+              go install 
+              go build -v ./...
+              go test -v ./...
+            displayName: Go Version and Go Build
+

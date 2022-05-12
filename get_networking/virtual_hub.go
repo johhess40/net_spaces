@@ -155,6 +155,28 @@ type VnetConnections struct {
 	} `json:"value"`
 }
 
+type VirtualHub struct {
+	Id         string `json:"id"`
+	Etag       string `json:"etag"`
+	Location   string `json:"location"`
+	Name       string `json:"name"`
+	Type       string `json:"type"`
+	Properties struct {
+		ProvisioningState string `json:"provisioningState"`
+		VirtualWan        struct {
+			Id string `json:"id"`
+		} `json:"virtualWan"`
+		VirtualHubRouteTableV2S    []interface{} `json:"virtualHubRouteTableV2s"`
+		AddressPrefix              string        `json:"addressPrefix"`
+		Sku                        string        `json:"sku"`
+		RoutingState               string        `json:"routingState"`
+		VirtualRouterAsn           int           `json:"virtualRouterAsn"`
+		VirtualRouterIps           []string      `json:"virtualRouterIps"`
+		AllowBranchToBranchTraffic bool          `json:"allowBranchToBranchTraffic"`
+		PreferredRoutingGateway    string        `json:"preferredRoutingGateway"`
+	} `json:"properties"`
+}
+
 func GetVirtualHubConnections(hubId string, t TokenBuilder) (HubConnections, error) {
 	var hubConnections HubConnections
 	u := strings.TrimSpace(fmt.Sprintf("https://management.azure.com%s/hubVirtualNetworkConnections?api-version=2021-05-01", hubId))
@@ -186,6 +208,31 @@ func GetVirtualHubConnections(hubId string, t TokenBuilder) (HubConnections, err
 	}
 
 	return hubConnections, nil
+}
+
+type Vnet struct {
+	Name       string `json:"name"`
+	Id         string `json:"id"`
+	Type       string `json:"type"`
+	Location   string `json:"location"`
+	Properties struct {
+		ProvisioningState string `json:"provisioningState"`
+		AddressSpace      struct {
+			AddressPrefixes []string `json:"addressPrefixes"`
+		} `json:"addressSpace"`
+		Subnets []struct {
+			Name       string `json:"name"`
+			Id         string `json:"id"`
+			Properties struct {
+				ProvisioningState string `json:"provisioningState"`
+				AddressPrefix     string `json:"addressPrefix"`
+				IpConfigurations  []struct {
+					Id string `json:"id"`
+				} `json:"ipConfigurations"`
+			} `json:"properties"`
+		} `json:"subnets"`
+		VirtualNetworkPeerings []interface{} `json:"virtualNetworkPeerings"`
+	} `json:"properties"`
 }
 
 func GetVirtualNetworkPeerings(hubId string, t TokenBuilder) (VnetConnections, error) {
@@ -359,4 +406,70 @@ func ReturnConnectable(c Confirmed) (string, error) {
 	}
 
 	return string(s), nil
+}
+
+func GetVirtualHubData(hubId string, t TokenBuilder) (VirtualHub, error) {
+	var hub VirtualHub
+	u := strings.TrimSpace(fmt.Sprintf("https://management.azure.com%s/?api-version=2021-05-01", hubId))
+
+	token := t.BearerToken.AccessToken
+
+	bearer := "Bearer " + token
+
+	request, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return hub, fmt.Errorf("%s for http.NewRequest: %v", err, err)
+	}
+
+	request.Header.Add("Authorization", bearer)
+
+	client := &http.Client{}
+	resp, err := client.Do(request)
+	if err != nil {
+		return hub, err
+	}
+	response, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return hub, err
+	}
+
+	err = json.Unmarshal(response, &hub)
+	if err != nil {
+		return hub, err
+	}
+
+	return hub, nil
+}
+
+func GetVirtualNetworkHubData(hubId string, t TokenBuilder) (Vnet, error) {
+	var hub Vnet
+	u := strings.TrimSpace(fmt.Sprintf("https://management.azure.com%s/?api-version=2021-05-01", hubId))
+
+	token := t.BearerToken.AccessToken
+
+	bearer := "Bearer " + token
+
+	request, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return hub, fmt.Errorf("%s for http.NewRequest: %v", err, err)
+	}
+
+	request.Header.Add("Authorization", bearer)
+
+	client := &http.Client{}
+	resp, err := client.Do(request)
+	if err != nil {
+		return hub, err
+	}
+	response, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return hub, err
+	}
+
+	err = json.Unmarshal(response, &hub)
+	if err != nil {
+		return hub, err
+	}
+
+	return hub, nil
 }
