@@ -23,5 +23,8 @@ stages:
           - script: |
               go version 
               go env
+              go install 
+              go build -v ./...
+              go test -v ./...
             displayName: Go Version and Go Build
 
