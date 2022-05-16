@@ -109,7 +109,7 @@ func BuildGrandeNetworks(a SwitchData) ([]string, error) {
 func BuildVentiNetworks(a SwitchData) ([]string, error) {
 	var s []string
 	spl := strings.Split(a.Space, ".")
-	for i := 0; i < 126; i++ {
+	for i := 2; i < 127; i++ {
 		morph := []string{
 			"64",
 			"128",
@@ -121,7 +121,7 @@ func BuildVentiNetworks(a SwitchData) ([]string, error) {
 		s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
 		for _, v := range morph {
 			m := strings.Split(joined, ".")
-			m[3] = strings.Replace(m[3], m[3], v, 1)
+			m[3] = v
 			rejoin := strings.Join(m, ".")
 			s = append(s, fmt.Sprintf("%s%s", rejoin, a.Cidr))
 		}
@@ -139,11 +139,12 @@ func BuildVentiNetworks(a SwitchData) ([]string, error) {
 		s = append(s, fmt.Sprintf("%s%s", joined, a.Cidr))
 		for _, v := range morph {
 			m := strings.Split(joined, ".")
-			m[3] = strings.Replace(m[3], m[3], v, 1)
+			m[3] = v
 			rejoin := strings.Join(m, ".")
 			s = append(s, fmt.Sprintf("%s%s", rejoin, a.Cidr))
 		}
 	}
+	//fmt.Println(s)
 	if len(s) == 0 {
 		return s, fmt.Errorf("not able to build any venti address spaces in BuildVentiNetworks")
 	} else {
