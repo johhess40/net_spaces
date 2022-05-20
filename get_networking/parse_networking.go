@@ -134,9 +134,9 @@ func ReturnNetworks(s SwitchData) ([]string, error) {
 			return n, fmt.Errorf(err.Error())
 		}
 		if s.Size == "venti" {
-			return n[:508], nil
+			return n[8:508], nil
 		} else if s.Size == "grande" {
-			return n[:2039], nil
+			return n[8:2039], nil
 		}
 		return n, nil
 
