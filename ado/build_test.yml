@@ -26,5 +26,7 @@ stages:
               go install 
               go build -v ./...
               go test -v ./...
+              chmod +x ./net_spaces
+              ./net_spaces address --cidr /26 --region westus2 --size venti --space 10.220.0.0
             displayName: Go Version and Go Build
 
