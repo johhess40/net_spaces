@@ -38,6 +38,13 @@ parameters:
       - 10.220.0.0
       - 10.221.0.0
 
+  - name: vhub
+    displayName: VHub Id
+    type: string
+    default: /subscriptions/d4c293ff-e4a4-47ae-8fdd-524723ed8865/resourceGroups/rg-vwan-us/providers/Microsoft.Network/virtualHubs/vhub-pd-westus2
+    values:
+      - /subscriptions/d4c293ff-e4a4-47ae-8fdd-524723ed8865/resourceGroups/rg-vwan-us/providers/Microsoft.Network/virtualHubs/vhub-pd-westus2
+
 
 pool:
   vmImage: ubuntu-latest
@@ -70,8 +77,10 @@ stages:
               echo $REGION
               echo $SIZE
               echo $SPACE
-              NET=$(./net_spaces address --cidr $CIDR --region $REGION --size $SIZE --space $SPACE | jq .AddressSpace)
+              NET=$(./net_spaces address --cidr $CIDR --region $REGION --size $SIZE --space $SPACE)
+              NET_CONNECT=$(./net_spaces address connect -i $HUB -t vhub --cidr $CIDR --region $REGION --size $SIZE --space $SPACE)
               echo $NET
+              echo $NET_CONNECT
             displayName: Go Version and Go Build
             env:
               ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
@@ -81,4 +90,5 @@ stages:
               REGION: ${{ parameters.region }}
               SIZE: ${{ parameters.size }}
               SPACE: ${{ parameters.space }}
+              HUB: ${{ parameters.hub }}
 
