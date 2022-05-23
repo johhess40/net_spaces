@@ -66,10 +66,10 @@ stages:
               ARM_CLIENT_ID: $(ARM_CLIENT_ID)
               ARM_TENANT_ID: $(ARM_TENANT_ID)
           - script: |
-              echo "$(CIDR)" 
-              echo "$(REGION)" 
-              echo "$(SIZE)" 
-              echo "$(SPACE)"
+              echo $(CIDR)
+              echo $(REGION)
+              echo $(SIZE) 
+              echo $(SPACE)
 #              ./net_spaces address --cidr $(CIDR) --region $(REGION) --size $(SIZE) --space $(SPACE)
             displayName: Go Version and Go Build
             env:
