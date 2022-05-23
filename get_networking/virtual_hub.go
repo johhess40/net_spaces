@@ -332,70 +332,46 @@ func ParseVnetConnections(hubId string, t TokenBuilder) ([]string, error) {
 }
 
 func MakeConnectionSwitches(j string, c Connect, t TokenBuilder) (Confirmed, error) {
-	var conf Confirmed
+	var jsonData Confirmed
 	switch c.HubType {
 	case "vhub":
 		connections, err := ParseHubConnections(c.HubId, t)
 		if err != nil {
-			return conf, err
+			return jsonData, err
 		}
-
-		jsonData := struct {
-			Region       string
-			ClientId     string
-			TenantId     string
-			AddressSpace string
-		}{}
-
 		err = json.Unmarshal([]byte(j), &jsonData)
 		if err != nil {
-			return conf, err
+			return jsonData, err
 		}
-
 		for _, v := range connections {
 			if v == jsonData.AddressSpace {
-				return conf, err
+				jsonData.RemoteConnectionId = c.HubId
+				jsonData.AddressSpace = "null"
+				return jsonData, err
 			}
 		}
-		conf.RemoteConnectionId = c.HubId
-		conf.Region = jsonData.Region
-		conf.ClientId = jsonData.ClientId
-		conf.TenantId = jsonData.TenantId
-		conf.AddressSpace = jsonData.AddressSpace
+		jsonData.RemoteConnectionId = c.HubId
 
-		return conf, nil
+		return jsonData, nil
 	case "vnet":
 		connections, err := ParseVnetConnections(c.HubId, t)
 		if err != nil {
-			return conf, err
+			return jsonData, err
 		}
-
-		jsonData := struct {
-			Region       string
-			ClientId     string
-			TenantId     string
-			AddressSpace string
-		}{}
 
 		err = json.Unmarshal([]byte(j), &jsonData)
 		if err != nil {
-			return conf, err
+			return jsonData, err
 		}
 
 		for _, v := range connections {
 			if v == jsonData.AddressSpace {
-				return conf, err
+				return jsonData, nil
 			}
 		}
-		conf.RemoteConnectionId = c.HubId
-		conf.Region = jsonData.Region
-		conf.ClientId = jsonData.ClientId
-		conf.TenantId = jsonData.TenantId
-		conf.AddressSpace = jsonData.AddressSpace
-
-		return conf, nil
+		return jsonData, nil
 	default:
-		return conf, nil
+		return jsonData, nil
 	}
 }
 
