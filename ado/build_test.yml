@@ -5,6 +5,47 @@ trigger:
     include:
       - "main"
 
+parameters:
+  - name: cidr
+    displayName: CIDR Space
+    type: string
+    default: /26
+    values:
+      - /26
+      - /28
+
+  - name: region
+    displayName: Region
+    type: string
+    default: westus2
+    values:
+      - westus2
+      - eastus2
+
+  - name: size
+    displayName: Spoke Size
+    type: string
+    default: venti
+    values:
+      - venti
+      - grande
+
+  - name: space
+    displayName: Address Chunk
+    type: string
+    default: 10.220.0.0
+    values:
+      - 10.220.0.0
+      - 10.221.0.0
+
+  - name: vhub
+    displayName: VHub Id
+    type: string
+    default: /subscriptions/d4c293ff-e4a4-47ae-8fdd-524723ed8865/resourceGroups/rg-vwan-us/providers/Microsoft.Network/virtualHubs/vhub-pd-westus2
+    values:
+      - /subscriptions/d4c293ff-e4a4-47ae-8fdd-524723ed8865/resourceGroups/rg-vwan-us/providers/Microsoft.Network/virtualHubs/vhub-pd-westus2
+
+
 pool:
   vmImage: ubuntu-latest
 
@@ -23,5 +64,30 @@ stages:
           - script: |
               go version 
               go env
+              go install 
+              go build .
+              go test -v ./...
             displayName: Go Version and Go Build
+            env:
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+          - script: |
+              echo $CIDR
+              echo $REGION
+              echo $SIZE
+              echo $SPACE
+              echo $HUB
+              NET_CONNECT=$(./net_spaces address connect -i $HUB -t vhub --cidr $CIDR --region $REGION --size $SIZE --space $SPACE)
+              echo $NET_CONNECT
+            displayName: Test Connecting To Virtual Hub
+            env:
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+              CIDR: ${{ parameters.cidr }}
+              REGION: ${{ parameters.region }}
+              SIZE: ${{ parameters.size }}
+              SPACE: ${{ parameters.space }}
+              HUB: ${{ parameters.vhub }}
 
