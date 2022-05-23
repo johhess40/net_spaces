@@ -70,7 +70,7 @@ stages:
               echo $REGION
               echo $SIZE
               echo $SPACE
-#              ./net_spaces address --cidr $(CIDR) --region $(REGION) --size $(SIZE) --space $(SPACE)
+              ./net_spaces address --cidr $CIDR --region $REGION --size $SIZE --space $SPACE
             displayName: Go Version and Go Build
             env:
               ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
