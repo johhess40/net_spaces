@@ -24,8 +24,8 @@ stages:
               go version 
               go env
               go install 
-              go build -v ./...
+              go build .
               go test -v ./...
-              ls -la
+              ./net_spaces --help
             displayName: Go Version and Go Build
 
