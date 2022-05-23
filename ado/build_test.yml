@@ -77,7 +77,7 @@ stages:
               echo $REGION
               echo $SIZE
               echo $SPACE
-              NET=$(./net_spaces address --cidr $CIDR --region $REGION --size $SIZE --space $SPACE)
+              echo $HUB
               NET_CONNECT=$(./net_spaces address connect -i $HUB -t vhub --cidr $CIDR --region $REGION --size $SIZE --space $SPACE)
               echo $NET
               echo $NET_CONNECT
