@@ -344,14 +344,15 @@ func MakeConnectionSwitches(j string, c Connect, t TokenBuilder) (Confirmed, err
 			return jsonData, err
 		}
 		for _, v := range connections {
-			if v == jsonData.AddressSpace {
+			if v != jsonData.AddressSpace {
+				jsonData.RemoteConnectionId = c.HubId
+				return jsonData, nil
+			} else {
 				jsonData.RemoteConnectionId = c.HubId
 				jsonData.AddressSpace = "null"
-				return jsonData, err
+				return jsonData, nil
 			}
 		}
-		jsonData.RemoteConnectionId = c.HubId
-
 		return jsonData, nil
 	case "vnet":
 		connections, err := ParseVnetConnections(c.HubId, t)
