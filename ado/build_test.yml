@@ -5,6 +5,48 @@ trigger:
     include:
       - "main"
 
+parameters:
+  - name: cidr
+    displayName: CIDR Space
+    type: string
+    default: /26
+    values:
+      - /26
+      - /28
+
+  - name: region
+    displayName: Region
+    type: string
+    default: westus2
+    values:
+      - westus2
+      - eastus2
+
+  - name: size
+    displayName: Spoke Size
+    type: string
+    default: venti
+    values:
+      - venti
+      - grande
+
+  - name: space
+    displayName: Address Chunk
+    type: string
+    default: /26
+    values:
+      - /26
+      - /28
+
+  - name: cidr
+    displayName: Pool Image
+    type: string
+    default: 10.220.0.0
+    values:
+      - 10.220.0.0
+      - 10.221.0.0
+
+
 pool:
   vmImage: ubuntu-latest
 
@@ -25,11 +67,21 @@ stages:
               go env
               go install 
               go build .
-              ./net_spaces address --cidr /26 --region westus2 --size venti --space 10.220.0.0
               go test -v ./...
             displayName: Go Version and Go Build
             env:
               ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
               ARM_CLIENT_ID: $(ARM_CLIENT_ID)
               ARM_TENANT_ID: $(ARM_TENANT_ID)
+          - script: |
+              ./net_spaces address --cidr $CIDR --region $REGION --size $SIZE --space $SPACE
+            displayName: Go Version and Go Build
+            env:
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+              CIDR: ${{ parameters.cidr }}
+              REGION: ${{ parameters.region }}
+              SIZE: ${{ parameters.size }}
+              SPACE: ${{ parameters.space }}
 
