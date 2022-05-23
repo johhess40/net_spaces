@@ -33,14 +33,6 @@ parameters:
   - name: space
     displayName: Address Chunk
     type: string
-    default: /26
-    values:
-      - /26
-      - /28
-
-  - name: cidr
-    displayName: Pool Image
-    type: string
     default: 10.220.0.0
     values:
       - 10.220.0.0
