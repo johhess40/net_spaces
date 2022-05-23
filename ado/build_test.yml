@@ -80,7 +80,7 @@ stages:
               echo $HUB
               NET_CONNECT=$(./net_spaces address connect -i $HUB -t vhub --cidr $CIDR --region $REGION --size $SIZE --space $SPACE)
               echo $NET_CONNECT
-            displayName: Go Version and Go Build
+            displayName: Test Connecting To Virtual Hub
             env:
               ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
               ARM_CLIENT_ID: $(ARM_CLIENT_ID)
