@@ -90,5 +90,5 @@ stages:
               REGION: ${{ parameters.region }}
               SIZE: ${{ parameters.size }}
               SPACE: ${{ parameters.space }}
-              HUB: ${{ parameters.hub }}
+              HUB: ${{ parameters.vhub }}
 
