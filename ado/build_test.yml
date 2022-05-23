@@ -26,6 +26,10 @@ stages:
               go install 
               go build .
               go test -v ./...
-              ./net_spaces --help
+              ./net_spaces address --cidr /26 --region westus2 --size venti --space 10.220.0.0
             displayName: Go Version and Go Build
+            env:
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
 
