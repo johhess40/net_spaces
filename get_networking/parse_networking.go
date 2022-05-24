@@ -225,10 +225,10 @@ func RunAll(data SwitchData, t TokenBuilder, n Subscription) (string, error) {
 			return "", err
 		}
 		if num < len(grail) {
-			return grail[num], nil
+			return grail[len(grail)-1], nil
 		}
 	}
-	return grail[num], nil
+	return grail[len(grail)-1], nil
 }
 
 func JsonReturn(data SwitchData, t TokenBuilder) (struct {
