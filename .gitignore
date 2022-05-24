@@ -26,3 +26,5 @@ go.work
 /vendor/
 /Godeps/
 
+### Project Binary ###
+net_spaces
