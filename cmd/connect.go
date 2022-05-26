@@ -22,13 +22,13 @@ var connectCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		token, err := net.ExecToken()
 		if err != nil {
+			log.Fatal(err)
+		}
+		entry, errEntry := net.Entry(Switch, token)
+		if errEntry != nil {
 			return
 		}
-		address, err := Connection.Address(Switch, token)
-		if err != nil {
-			return
-		}
-		generate, err := Connection.Generate(address, Connection)
+		generate, err := Connection.Generate(entry, Connection)
 		if err != nil {
 			log.Fatal(err)
 		}

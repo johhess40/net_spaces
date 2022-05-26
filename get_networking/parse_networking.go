@@ -166,40 +166,48 @@ func BuildCompositeNetworkData(t TokenBuilder, s Subscription) (AzureNetData, er
 		}
 		net = append(net, networks.Value...)
 	}
+	// fmt.Println(net)
 	return net, nil
 }
 
+// func remove(s []string, index int) ([]string, error) {
+//     if index >= len(s) {
+//         return nil, errors.New("Out of Range Error")
+//     }
+//     return append(s[:index], s[index+1:]...), nil
+// }
+
 func EvaluateAvailableNetworks(data SwitchData, a AzureNetData) ([]string, error) {
-	var available []string
+	var used []string
 	ret, err := ReturnNetworks(data)
 	if err != nil {
-		return available, err
+		return used, err
 	}
-	for _, v := range ret {
-		for _, b := range a {
-			for _, z := range b.Properties.AddressSpace.AddressPrefixes {
-				if z != v {
-					available = append(available, v)
-				}
+
+	// Create list of used address spaces.
+	for _, b := range a {
+		for _, z := range b.Properties.AddressSpace.AddressPrefixes {
+			used = append(used, z)
+		}
+	}
+
+	// Compare list of used address spaces to all calculated networks and remove used.
+	for i := 0; i < len(ret); i++ {
+		for _, u := range used {
+			if ret[i] == u {
+				ret = append(ret[:i], ret[i+1:]...)
+				i--
+				break
 			}
 		}
 	}
 
-	keys := make(map[string]bool)
-	var list []string
+	// Uncomment for troubleshooting.
+	// fmt.Println(ret)
+	// fmt.Println(used)
+	// fmt.Println(ret)
 
-	// If the key(values of the slice) is not equal
-	// to the already present value in new slice (list)
-	// then we append it. else we jump on another element.
-	for _, entry := range available {
-		if _, value := keys[entry]; !value {
-			keys[entry] = true
-			list = append(list, entry)
-		}
-	}
-
-	//fmt.Println(list)
-	return list, nil
+	return ret, nil
 }
 
 func RunAll(data SwitchData, t TokenBuilder, n Subscription) (string, error) {
@@ -225,10 +233,10 @@ func RunAll(data SwitchData, t TokenBuilder, n Subscription) (string, error) {
 			return "", err
 		}
 		if num < len(grail) {
-			return grail[num], nil
+			return grail[len(grail)-1], nil
 		}
 	}
-	return grail[num], nil
+	return grail[len(grail)-1], nil
 }
 
 func JsonReturn(data SwitchData, t TokenBuilder) (struct {
