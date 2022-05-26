@@ -144,7 +144,7 @@ func BuildVentiNetworks(a SwitchData) ([]string, error) {
 			s = append(s, fmt.Sprintf("%s%s", rejoin, a.Cidr))
 		}
 	}
-	//fmt.Println(s)
+	// fmt.Println(s)
 	if len(s) == 0 {
 		return s, fmt.Errorf("not able to build any venti address spaces in BuildVentiNetworks")
 	} else {
