@@ -171,20 +171,27 @@ func BuildCompositeNetworkData(t TokenBuilder, s Subscription) (AzureNetData, er
 
 func EvaluateAvailableNetworks(data SwitchData, a AzureNetData) ([]string, error) {
 	var available []string
+	var used []string
 	ret, err := ReturnNetworks(data)
 	if err != nil {
 		return available, err
 	}
+
+	for _, v := range a {
+		for _, h := range v.Properties.AddressSpace.AddressPrefixes {
+			used = append(used, h)
+		}
+	}
+
 	for _, v := range ret {
 		for _, b := range a {
 			for _, z := range b.Properties.AddressSpace.AddressPrefixes {
-				if z != v {
+				if z == v {
 					available = append(available, v)
 				}
 			}
 		}
 	}
-
 	keys := make(map[string]bool)
 	var list []string
 

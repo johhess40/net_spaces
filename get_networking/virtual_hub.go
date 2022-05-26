@@ -301,7 +301,6 @@ func ParseHubConnections(hubId string, t TokenBuilder) ([]string, error) {
 		if err != nil {
 			return netspaces, err
 		}
-
 		response, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return netspaces, err
@@ -313,6 +312,7 @@ func ParseHubConnections(hubId string, t TokenBuilder) ([]string, error) {
 		}
 		netspaces = append(netspaces, network.NetworkStuff.Properties.AddressSpace.AddressPrefixes...)
 	}
+	fmt.Println(netspaces)
 	return netspaces, nil
 }
 
